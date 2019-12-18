@@ -10,6 +10,7 @@ var moveRight = false;
 var prevTime = performance.now();
 var velocity = new THREE.Vector3();
 var direction = new THREE.Vector3();
+var loader = new THREE.TextureLoader();
 
 init();
 animate();
@@ -184,13 +185,16 @@ function init() {
 
   // bottom
   var geometry = new THREE.BoxGeometry(250, 1, 250, 2, 2, 2);
-  var material = new THREE.MeshLambertMaterial({ color: 0xfff });
+  var material = new THREE.MeshLambertMaterial({
+    color: 0xfff,
+    map: loader.load('./textures/blue.jpg')
+  });
   var bottom = new THREE.Mesh(geometry, material);
   bottom.position.set(0, -12.5, 0);
   scene.add(bottom);
 
   // Point light
-  const light = new THREE.PointLight(0xffffff, 2, 80);
+  const light = new THREE.PointLight(0xffffff, 2, 100);
   light.position.set(0, 50, 0);
   light.shadow.camera.near = 1;
   light.shadow.camera.far = 62;
@@ -233,7 +237,10 @@ function animate() {
 function addBase(xOption, wheelColor) {
   var geometry_cube = new THREE.BoxGeometry(25, 5, 10);
   geometry_cube.translate(5 + xOption, -7.5, 0);
-  var material = new THREE.MeshPhongMaterial({ color: 0xfbceae });
+  var material = new THREE.MeshPhongMaterial({
+    color: 0xfbceae,
+    map: loader.load('./textures/wood.jpg')
+  });
   var cube = new THREE.Mesh(geometry_cube, material);
   cube.rotation.x = 0;
   cube.rotation.y = Math.PI / 6;
