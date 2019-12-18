@@ -1,6 +1,7 @@
 import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
 import { PointerLockControls } from './three/examples/jsm/controls/PointerLockControls.js';
 import * as THREE from './three/src/Three.js';
+import { fragmentParams, vertex, vertexParams } from './shaders.js';
 
 let renderer, controls, scene, camera;
 var moveForward = false;
@@ -21,7 +22,7 @@ function init() {
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMapEnabled = true;
-  renderer.shadowMap.type = THREE.BasicShadowMap;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1;
 
@@ -43,30 +44,75 @@ function init() {
 
   // green cylinder
   var geometry = new THREE.CylinderGeometry(5, 5, 15, 32); // radiusTop?: number, radiusBottom?: number, height?: number, radiusSegments?: number, heightSegments?: number, openEnded?: boolean, thetaStart?: number, thetaLength?: number
-  // geometry.translate(15, 15, 0);
   var material = new THREE.MeshPhongMaterial({ color: 0xff19 });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var cylinder = new THREE.Mesh(geometry, material);
   cylinder.rotation.x = Math.PI / 2;
   cylinder.rotation.z = Math.PI / 3;
+  cylinder.receiveShadow = true;
+  cylinder.castShadow = true;
   scene.add(cylinder);
 
   // blue cylinder
   var geometry = new THREE.CylinderGeometry(3, 2, 5, 32); // radiusTop?: number, radiusBottom?: number, height?: number, radiusSegments?: number, heightSegments?: number, openEnded?: boolean, thetaStart?: number, thetaLength?: number
   geometry.translate(-4, 7.5, 2);
   var material = new THREE.MeshPhongMaterial({ color: 0x1b9cbd });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var cylinder = new THREE.Mesh(geometry, material);
-  // cylinder.rotation.x = Math.PI / 2;
-  // cylinder.rotation.z = Math.PI / 3;
+  cylinder.receiveShadow = true;
+  cylinder.castShadow = true;
   scene.add(cylinder);
 
   // red-blue cube
   var geometry_cube = new THREE.BoxGeometry(6.5, 13, 6.5);
   geometry_cube.translate(12.5, 1, 0);
   var material = new THREE.MeshPhongMaterial({ color: 0xe02e3f });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var cube = new THREE.Mesh(geometry_cube, material);
   cube.rotation.x = 0;
   cube.rotation.y = Math.PI / 6;
   cube.rotation.z = 0;
+  cube.receiveShadow = true;
+  cube.castShadow = true;
   scene.add(cube);
 
   // yellow half-cylinder
@@ -82,9 +128,25 @@ function init() {
   );
   geometry.translate(0, -13, -5.5);
   var material = new THREE.MeshPhongMaterial({ color: 0xfdcc30 });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var cylinder = new THREE.Mesh(geometry, material);
   cylinder.rotation.x = Math.PI / 2;
   cylinder.rotation.z = Math.PI / 3;
+  cylinder.receiveShadow = true;
+  cylinder.castShadow = true;
   scene.add(cylinder);
 
   addBase(28, 0x1b9cbd); // base 2 // moved to 28
@@ -93,10 +155,26 @@ function init() {
   var geometry_cube = new THREE.BoxGeometry(20, 13, 6.5);
   geometry_cube.translate(34, 1, 0);
   var material = new THREE.MeshPhongMaterial({ color: 0xfdcc30 });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var cube = new THREE.Mesh(geometry_cube, material);
   cube.rotation.x = 0;
   cube.rotation.y = Math.PI / 6;
   cube.rotation.z = 0;
+  cube.receiveShadow = true;
+  cube.castShadow = true;
   scene.add(cube);
 
   addBase(56, 0xe02e3f); // base 3 // moved to 56
@@ -105,10 +183,26 @@ function init() {
   var geometry_cube = new THREE.BoxGeometry(20, 13, 6.5);
   geometry_cube.translate(62, 1, 0);
   var material = new THREE.MeshPhongMaterial({ color: 0xff19 });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var cube = new THREE.Mesh(geometry_cube, material);
   cube.rotation.x = 0;
   cube.rotation.y = Math.PI / 6;
   cube.rotation.z = 0;
+  cube.receiveShadow = true;
+  cube.castShadow = true;
   scene.add(cube);
 
   // blue half-cylinder
@@ -124,9 +218,25 @@ function init() {
   );
   geometry.translate(0, -62, -5.5);
   var material = new THREE.MeshPhongMaterial({ color: 0x1b9cbd });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var cylinder = new THREE.Mesh(geometry, material);
   cylinder.rotation.x = Math.PI / 2;
   cylinder.rotation.z = Math.PI / 3;
+  cylinder.receiveShadow = true;
+  cylinder.castShadow = true;
   scene.add(cylinder);
 
   // rotation controls
@@ -189,22 +299,40 @@ function init() {
     color: 0xfff,
     map: loader.load('./textures/blue.jpg')
   });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var bottom = new THREE.Mesh(geometry, material);
-  bottom.position.set(0, -12.5, 0);
+  bottom.castShadow = false;
+  bottom.receiveShadow = true;
+  bottom.position.set(0, -13, 0);
   scene.add(bottom);
 
   // Point light
-  const light = new THREE.PointLight(0xffffff, 2, 100);
-  light.position.set(0, 50, 0);
+  const light = new THREE.PointLight(0xffffff, 2, 80);
+  light.position.set(10, 40, 10);
   light.shadow.camera.near = 1;
-  light.shadow.camera.far = 62;
+  light.shadow.camera.far = 90;
   light.shadow.bias = -0.005; // reduces self-shadowing on double-sided objects
   light.castShadow = true; // default false
+  light.shadow.mapSize.width = 2048; // default is 512
+  light.shadow.mapSize.height = 2048; // default is 512
   scene.add(light);
 
   // point light helper
-  var helper = new THREE.CameraHelper(light.shadow.camera);
-  scene.add(helper);
+  // var helper = new THREE.CameraHelper(light.shadow.camera);
+  // scene.add(helper);
 
   // Hole scene light
   var ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
@@ -241,7 +369,23 @@ function addBase(xOption, wheelColor) {
     color: 0xfbceae,
     map: loader.load('./textures/wood.jpg')
   });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var cube = new THREE.Mesh(geometry_cube, material);
+  cube.receiveShadow = true;
+  cube.castShadow = true; // default false
   cube.rotation.x = 0;
   cube.rotation.y = Math.PI / 6;
   cube.rotation.z = 0;
@@ -257,7 +401,23 @@ function addWheel(xOption, yOption, color) {
   var geometry = new THREE.CylinderGeometry(4.5, 4.5, 3, 32); // radiusTop?: number, radiusBottom?: number, height?: number, radiusSegments?: number, heightSegments?: number, openEnded?: boolean, thetaStart?: number, thetaLength?: number
   geometry.translate(-2 + xOption, yOption, 7.5);
   var material = new THREE.MeshPhongMaterial({ color: color });
+  material.onBeforeCompile = shader => {
+    shader.fragmentShader = shader.fragmentShader.replace(
+      '#include <shadowmap_pars_fragment>',
+      fragmentParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_pars_vertex>',
+      vertexParams
+    );
+    shader.vertexShader = shader.vertexShader.replace(
+      '#include <shadowmap_vertex>',
+      vertex
+    );
+  };
   var cylinder = new THREE.Mesh(geometry, material);
+  cylinder.receiveShadow = true;
+  cylinder.castShadow = true;
   cylinder.rotation.x = Math.PI / 2;
   cylinder.rotation.z = -Math.PI / 6;
   scene.add(cylinder);
